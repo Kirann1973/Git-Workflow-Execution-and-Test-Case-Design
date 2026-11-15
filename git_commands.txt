@@ -1,0 +1,162 @@
+GIT COMMANDS USED IN THIS ASSIGNMENT
+Name: Kiran N    ID: 2024eb02604
+=====================================================================
+
+STEP 1: LOCAL REPOSITORY SETUP
+---------------------------------------------------------------------
+mkdir git-workflow-project
+    Creates the project folder on the local machine.
+
+cd git-workflow-project
+    Moves into the project folder so all later commands run inside it.
+
+git init -b main
+    Initializes an empty Git repository and names the default branch "main".
+
+git config user.name "Kiran N"
+    Sets the author name for commits in this repository only.
+
+git config user.email "kirann1234569@gmail.com"
+    Sets the author email for commits in this repository only, so every commit is attributed to me.
+
+ls -la
+    Lists all files in the folder (index.html, about.html and the hidden .git folder).
+
+git status
+    Shows the state of the working tree (here: two untracked HTML files, no commits yet).
+
+
+STEP 2: GIT WORKFLOW EXECUTION
+---------------------------------------------------------------------
+git add index.html about.html
+    Stages both HTML files so they are included in the next commit.
+
+git commit -m "Initial commit: add index.html and about.html"
+    Records the initial state of the project as the first commit.
+
+git diff
+    Shows the unstaged changes made to index.html before committing.
+
+git add index.html
+    Stages the modified index.html.
+
+git commit -m "Update home page description in index.html"
+    Creates the second commit containing the edit to index.html.
+
+git branch feature
+    Creates a new branch named "feature" at the current commit.
+
+git switch feature
+    Switches the working directory to the "feature" branch.
+
+git branch
+    Lists local branches; the * marks the branch currently checked out.
+
+git add about.html
+    Stages the modified about.html (author details added on the feature branch).
+
+git commit -m "Add author details to about.html on feature branch"
+    Commits the change on the feature branch only; main is not affected.
+
+git log --oneline
+    Shows a compact one-line-per-commit history of the current branch.
+
+git switch main
+    Switches back to the main branch (the feature commit is not visible here yet).
+
+git merge --no-ff feature -m "Merge branch 'feature' into main"
+    Merges feature into main. --no-ff forces a merge commit so the branch activity stays visible in history.
+
+git log --oneline --graph --all --decorate
+    Displays the full history as a graph for all branches, showing the branch and merge.
+
+git log --format='%h | %an <%ae> | %s'
+    Prints each commit's hash, author name, author email and message to verify authorship.
+
+
+STEP 3: .gitignore IMPLEMENTATION
+---------------------------------------------------------------------
+printf '# Ignore log files\n*.log\n\n# Ignore the temp folder\ntemp/\n' > .gitignore
+    Creates the .gitignore file that ignores all .log files and the temp/ folder.
+
+cat .gitignore
+    Prints the contents of .gitignore to confirm the rules.
+
+mkdir temp
+    Creates a temp folder to test the ignore rule.
+
+echo "cache data" > temp/cache.txt
+    Creates a sample file inside temp/ (should be ignored).
+
+echo "debug output" > debug.log
+    Creates a sample .log file (should be ignored).
+
+ls -A
+    Lists all files including hidden ones, to show the test files exist.
+
+git status
+    Shows that only .gitignore is untracked; debug.log and temp/ are not listed.
+
+git add .gitignore
+    Stages the .gitignore file.
+
+git commit -m "Add .gitignore to ignore *.log files and temp/ folder"
+    Commits the .gitignore file.
+
+git check-ignore -v debug.log temp/cache.txt
+    Shows which .gitignore rule is responsible for ignoring each file.
+
+
+STEP 4: UNDO OPERATION
+---------------------------------------------------------------------
+echo "<p>Footer: this line will be undone.</p>" >> index.html
+    Appends a line to index.html to create a change for the extra commit.
+
+git add index.html
+    Stages the change.
+
+git commit -m "Add footer line to index.html (will be undone)"
+    Makes the additional commit that will be undone.
+
+git log --oneline -n 5
+    Shows the 5 most recent commits, with the extra commit at the top.
+
+git revert HEAD --no-edit
+    Undoes the last commit by creating a new commit that reverses its changes. History is kept, so it is safe for a repository that is pushed to GitHub.
+
+git show --stat HEAD
+    Shows the revert commit and which file it changed.
+
+grep -c "Footer" index.html
+    Counts lines containing "Footer"; 0 confirms the undone line is gone from the file.
+
+
+STEP 5: GITHUB INTEGRATION
+---------------------------------------------------------------------
+gh auth status
+    Confirms the GitHub CLI is logged in to my GitHub account.
+
+gh repo create Git-Workflow-Execution-and-Test-Case-Design --public --source=. --remote=origin
+    Creates a PUBLIC repository on GitHub and connects the local repository to it as the remote "origin".
+    (GitHub replaces spaces in the name with hyphens.)
+
+git config credential.helper '!gh auth git-credential'
+    Tells Git (for this repository only) to use my logged-in GitHub CLI session for HTTPS authentication when pushing.
+
+git remote -v
+    Lists the configured remotes to verify "origin" points to the GitHub repository.
+
+git add git_commands.txt
+    Stages this command documentation file.
+
+git commit -m "Add git_commands.txt documenting all Git commands used"
+    Commits the documentation file.
+
+git push -u origin main
+    Pushes the main branch (and its full history) to GitHub and sets origin/main as the upstream.
+
+git push origin feature
+    Pushes the feature branch to GitHub so the branch activity is visible there.
+
+git log --oneline --graph --all --decorate
+    Final check of the complete history that was pushed to GitHub.
